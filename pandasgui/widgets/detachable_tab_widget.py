@@ -116,15 +116,15 @@ class DetachableTabWidget(QtWidgets.QTabWidget):
         # Determine if the given image and the main window icon are the same.
         # If they are, then do not add the icon to the tab
         if tabIconImage == windowIconImage:
-            if insertAt == None:
-                index = self.addTab(contentWidget, name)
-            else:
-                index = self.insertTab(insertAt, contentWidget, name)
+            index = (
+                self.addTab(contentWidget, name)
+                if insertAt is None
+                else self.insertTab(insertAt, contentWidget, name)
+            )
+        elif insertAt is None:
+            index = self.addTab(contentWidget, icon, name)
         else:
-            if insertAt == None:
-                index = self.addTab(contentWidget, icon, name)
-            else:
-                index = self.insertTab(insertAt, contentWidget, icon, name)
+            index = self.insertTab(insertAt, contentWidget, icon, name)
 
         # Make this tab the current tab
         if index > -1:
@@ -205,11 +205,7 @@ class DetachableTabWidget(QtWidgets.QTabWidget):
     ##
     #  Close all tabs that are currently detached.
     def closeDetachedTabs(self):
-        listOfDetachedTabs = []
-
-        for key in self.detachedTabs:
-            listOfDetachedTabs.append(self.detachedTabs[key])
-
+        listOfDetachedTabs = [self.detachedTabs[key] for key in self.detachedTabs]
         for detachedTab in listOfDetachedTabs:
             detachedTab.close()
 
